@@ -103,7 +103,7 @@ function eqSheet() {
   let gains = [...player.eqGains];
   const form = openSheet(`
     <h2 id="sheet-title">Equalizador</h2>
-    <p>Ajusta o timbre do narrador. Vale para todos os livros neste aparelho.</p>
+    <p>Ajusta o timbre do narrador. Vale para todos os livros neste aparelho.${settings.get().rate === 1 ? '' : ` <b>Pausado a ${rateLabel(settings.get().rate)}:</b> o iPhone só aplica o equalizador em 1,0×.`}</p>
     <div class="chips" id="eq-presets">${PRESETS.map((p) => `<button type="button" class="chip" data-pick="${p.id}">${p.label}</button>`).join('')}
       <span class="chip chip-static" id="eq-custom">Personalizado</span></div>
     <div class="eq" role="group" aria-label="Faixas do equalizador">
@@ -169,7 +169,7 @@ function eqSheet() {
 function speedSheet() {
   const cur = settings.get().rate;
   openSheet(
-    `<h2 id="sheet-title">Velocidade</h2><p>Vale para todos os livros neste aparelho.</p>
+    `<h2 id="sheet-title">Velocidade</h2><p>Vale para todos os livros neste aparelho.${isFlat(player.eqGains) ? '' : ' Fora de 1,0× o equalizador fica pausado (limitação do iPhone).'}</p>
      <div class="chips">${RATES.map((r) => `<button class="chip" data-pick="${r}" aria-pressed="${r === cur}">${rateLabel(r)}</button>`).join('')}</div>`,
     (v) => { player.setRate(Number(v)); update(); },
   );
@@ -499,7 +499,7 @@ function updateNow() {
   r.sleep.textContent = player.sleep ? (player.sleep.kind === 'track' ? 'Fim cap' : human(rem / 1000)) : 'Timer';
   r.sleep.setAttribute('aria-label', player.sleep ? `Timer: ${r.sleep.textContent}` : 'Timer para dormir');
   r.sleep.classList.toggle('on', !!player.sleep);
-  r.eq.classList.toggle('on', !isFlat(player.eqGains));
+  r.eq.classList.toggle('on', player.eqActive);
   paintPlay(r.play);
 }
 

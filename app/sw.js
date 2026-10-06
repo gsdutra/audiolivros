@@ -1,6 +1,6 @@
 // Offline support. App shell: precached, served stale-while-revalidate. Library: hashed files cache-first (they never
 // change), the small index/manifest files network-first so newly published books show up.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL = `shell-${VERSION}`;
 const LIBRARY = 'library';
 const SHELL_FILES = [

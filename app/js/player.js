@@ -53,10 +53,14 @@ export class Player extends EventTarget {
   }
 
   // ---- Equalizer ----
+  // WebKit garbles audio (repeats, skips, ignores the new rate) when a Web Audio–routed element plays
+  // at a rate other than 1 (bugs 240405, 221334), so the EQ only runs at 1,0×; settings are kept.
+  get eqActive() { return !isFlat(this.eqGains) && settings.get().rate === 1; }
+
   setEq(gains) {
     this.eqGains = gains;
     settings.set({ eq: gains });
-    if (isFlat(gains)) {
+    if (!this.eqActive) {
       if (this.eq) this.swapElement();
       return;
     }
@@ -67,7 +71,7 @@ export class Player extends EventTarget {
 
   /** Synchronously inside a tap: build the graph and wake the AudioContext (iOS needs the gesture). */
   prepareEq() {
-    if (isFlat(this.eqGains) || document.hidden) return;
+    if (!this.eqActive || document.hidden) return;
     if (!this.eq) this.attachEq();
     this.eq.resume().catch(() => {});
   }
@@ -98,6 +102,7 @@ export class Player extends EventTarget {
     old.pause();
     eq.close();
     const a = this.audio;
+    a.defaultPlaybackRate = a.playbackRate = settings.get().rate;
     if (src) {
       a.src = src;
       if (src !== SILENCE) {
@@ -294,7 +299,15 @@ export class Player extends EventTarget {
 
   setRate(rate) {
     settings.set({ rate });
-    this.audio.playbackRate = rate;
+    if (this.eq && !this.eqActive) {
+      this.swapElement(); // leave the Web Audio path before changing speed (runs inside the tap)
+    } else {
+      this.audio.playbackRate = rate;
+      if (this.eqActive && !this.eq && !document.hidden) {
+        this.attachEq();
+        this.eq.resume().catch(() => {});
+      }
+    }
     this.emit('state');
   }
 
