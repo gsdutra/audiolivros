@@ -1,0 +1,201 @@
+{
+ "schemaVersion": 2,
+ "generatedAt": "2026-10-05T23:09:25",
+ "title": "Design System: Audiolivros",
+ "extensions": {
+  "colorMeta": {
+   "enamel": {
+    "role": "neutral",
+    "displayName": "Midnight Enamel",
+    "tonalRamp": [
+     "#05081a",
+     "#0b1230",
+     "#101a40",
+     "#182557",
+     "#26357a",
+     "#3b4d9e",
+     "#7d89c4",
+     "#d9ddf0"
+    ]
+   },
+   "porcelain": {
+    "role": "neutral",
+    "displayName": "Porcelain",
+    "tonalRamp": [
+     "#3b3a36",
+     "#5d5b55",
+     "#827f77",
+     "#a8a59c",
+     "#c9c6bd",
+     "#e2dfd7",
+     "#f4f1ea",
+     "#fbfaf6"
+    ]
+   },
+   "tile": {
+    "role": "neutral",
+    "displayName": "Station Tile (light ground)"
+   },
+   "scarlet": {
+    "role": "primary",
+    "displayName": "Scarlet Line",
+    "tonalRamp": [
+     "#3d070a",
+     "#6e0d12",
+     "#a5141b",
+     "#e8262f",
+     "#ef5a61",
+     "#f48b90",
+     "#f9bdc0",
+     "#fde8e9"
+    ]
+   },
+   "cobalt": {
+    "role": "secondary",
+    "displayName": "Cobalt Line"
+   },
+   "green": {
+    "role": "secondary",
+    "displayName": "Green Line"
+   },
+   "amber": {
+    "role": "secondary",
+    "displayName": "Amber Line (dark text on it)"
+   }
+  },
+  "typographyMeta": {
+   "station": {
+    "displayName": "Station",
+    "purpose": "Current chapter and screen titles; uppercase."
+   },
+   "label": {
+    "displayName": "Label",
+    "purpose": "Board headings, buttons, tabs, form labels; uppercase, tracked."
+   },
+   "reading": {
+    "displayName": "Reading",
+    "purpose": "Read-along paragraphs."
+   }
+  },
+  "shadows": [
+   {
+    "name": "float",
+    "value": "0 10px 30px rgba(2,5,20,0.55)",
+    "purpose": "Only floating elements: train, play ring, mini-player, toast, cover."
+   }
+  ],
+  "motion": [
+   {
+    "name": "ease-out",
+    "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+    "purpose": "All state transitions, 150–300ms."
+   },
+   {
+    "name": "sheet-rise",
+    "value": "translateY(40px)->0, 280ms",
+    "purpose": "Bottom sheets and toasts."
+   }
+  ],
+  "breakpoints": [
+   {
+    "name": "centered-column",
+    "value": "700px"
+   }
+  ]
+ },
+ "components": [
+  {
+   "name": "Primary Button",
+   "kind": "button",
+   "refersTo": "button-primary",
+   "description": "Line-ink plate for the main action.",
+   "html": "<button class=\"ds-btn-primary\">Continuar <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M4 12h15M13 6l6 6-6 6\"/></svg></button>",
+   "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 20px;border:0;border-radius:8px;background:#E8262F;color:#fff;font:600 17px/1 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;transition:transform .18s cubic-bezier(.22,1,.36,1)}.ds-btn-primary:active{transform:scale(.98);background:#c41d25}.ds-btn-primary:focus-visible{outline:2px solid #E8262F;outline-offset:3px}"
+  },
+  {
+   "name": "Ghost Button",
+   "kind": "button",
+   "refersTo": "button-ghost",
+   "description": "Outlined secondary action; ink plate when active.",
+   "html": "<button class=\"ds-btn-ghost\">1,3×</button>",
+   "css": ".ds-btn-ghost{min-height:48px;padding:0 18px;border:1.5px solid rgba(244,241,234,.9);border-radius:8px;background:transparent;color:#F4F1EA;font:600 16px/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}.ds-btn-ghost:active{background:#182557}.ds-btn-ghost:focus-visible{outline:2px solid #E8262F;outline-offset:3px}"
+  },
+  {
+   "name": "Line Badge",
+   "kind": "chip",
+   "refersTo": "line-badge",
+   "description": "Part of the book, beside the station name.",
+   "html": "<span class=\"ds-badge\">II · Direção</span>",
+   "css": ".ds-badge{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:13px;background:#E8262F;color:#fff;font:600 13px/1 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase}"
+  },
+  {
+   "name": "Departures Board",
+   "kind": "card",
+   "refersTo": "departures-board",
+   "description": "Next stops with minutes away.",
+   "html": "<section class=\"ds-board\"><h2>Próximas paradas</h2><div class=\"ds-row\"><i></i><span>Otimização versus aprendizagem</span><b>5<small>min</small></b></div><div class=\"ds-row\"><i class=\"hub\"></i><span class=\"chap\">8. Pivotar</span><b>50<small>min</small></b></div></section>",
+   "css": ".ds-board{background:#101A40;border:1.5px solid rgba(244,241,234,.9);border-radius:12px;color:#F4F1EA;font-family:Barlow,sans-serif;width:340px}.ds-board h2{margin:0;padding:14px 16px 10px;border-bottom:1px solid rgba(244,241,234,.2);font:600 16px 'Barlow Condensed',sans-serif;letter-spacing:.12em;text-transform:uppercase}.ds-row{display:grid;grid-template-columns:22px 1fr auto;gap:12px;align-items:center;padding:12px 16px}.ds-row i{width:14px;height:14px;border-radius:50%;border:3px solid #F4F1EA;box-shadow:0 0 0 0 #E8262F}.ds-row i.hub{width:20px;height:20px;border-width:4px}.ds-row .chap{font:600 17px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}.ds-row b{font:600 22px 'Barlow Condensed',sans-serif}.ds-row small{font-size:14px;font-weight:500;opacity:.72;margin-left:2px}"
+  },
+  {
+   "name": "Line Scrubber",
+   "kind": "custom",
+   "description": "The chapter as a line; the train is the thumb.",
+   "html": "<div class=\"ds-line\"><div class=\"rail\"></div><div class=\"done\"></div><span class=\"stop\" style=\"left:30%\"></span><span class=\"stop\" style=\"left:62%\"></span><span class=\"train\"></span></div>",
+   "css": ".ds-line{position:relative;width:320px;height:44px}.ds-line .rail,.ds-line .done{position:absolute;top:18px;height:8px;border-radius:4px}.ds-line .rail{left:0;right:0;background:#5b1a2d}.ds-line .done{left:0;width:45%;background:#E8262F}.ds-line .stop{position:absolute;top:19px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#F4F1EA}.ds-line .train{position:absolute;top:8px;left:45%;width:28px;height:28px;margin-left:-14px;border-radius:50%;background:#F4F1EA;border:6px solid #E8262F;box-shadow:0 0 0 4px #0B1230,0 10px 30px rgba(2,5,20,.55);box-sizing:border-box}"
+  },
+  {
+   "name": "Play Ring",
+   "kind": "button",
+   "refersTo": "play-ring",
+   "description": "Primary transport control.",
+   "html": "<button class=\"ds-play\"><svg viewBox=\"0 0 24 24\" width=\"38\" height=\"38\"><path d=\"M8 5.5v13a.6.6 0 0 0 .9.5l10.2-6.5a.6.6 0 0 0 0-1L8.9 5a.6.6 0 0 0-.9.5z\" fill=\"currentColor\"/></svg></button>",
+   "css": ".ds-play{display:grid;place-items:center;width:88px;height:88px;border:0;border-radius:50%;background:#F4F1EA;color:#0B1230;box-shadow:0 0 0 6px #E8262F,0 10px 30px rgba(2,5,20,.55);transition:transform .18s cubic-bezier(.22,1,.36,1)}.ds-play:active{transform:scale(.95)}.ds-play:focus-visible{outline:2px solid #F4F1EA;outline-offset:10px}"
+  },
+  {
+   "name": "Passphrase Input",
+   "kind": "input",
+   "refersTo": "input",
+   "description": "Outlined field; ink focus.",
+   "html": "<input class=\"ds-input\" type=\"password\" placeholder=\"Senha da biblioteca\">",
+   "css": ".ds-input{width:320px;height:54px;padding:0 16px;border:1.5px solid rgba(244,241,234,.9);border-radius:8px;background:#101A40;color:#F4F1EA;font:18px Barlow,sans-serif;outline:none;caret-color:#E8262F}.ds-input:focus{border-color:#E8262F;box-shadow:0 0 0 3px rgba(232,38,47,.3)}.ds-input::placeholder{color:rgba(244,241,234,.58)}"
+  }
+ ],
+ "narrative": {
+  "northStar": "Linha do Metrô",
+  "overview": "Each book is a metro line fired in midnight-blue enamel: chapters are stations, parts are interchanges, the listener is the train. Station type, a departures board and a draggable line answer 'where am I and how long until the next stop' at a glance.",
+  "keyCharacteristics": [
+   "Midnight enamel ground / cool porcelain tile in light",
+   "Barlow Condensed station caps over Barlow",
+   "One line ink per book",
+   "Lines only horizontal, vertical, 45°",
+   "Outlines for depth, one soft shadow for floating things"
+  ],
+  "rules": [
+   {
+    "name": "One Line, One Ink",
+    "body": "A book's identity is its ink; it marks position, heard progress and the primary action only.",
+    "section": "colors"
+   },
+   {
+    "name": "Station Caps",
+    "body": "Anything you navigate to is set in condensed capitals; reading text stays in Barlow sentence case.",
+    "section": "typography"
+   },
+   {
+    "name": "Outline, Not Shadow",
+    "body": "Panels carry a 1.5px rule; only floating elements cast the single soft shadow.",
+    "section": "elevation"
+   }
+  ],
+  "dos": [
+   "Do draw structure as lines and stations.",
+   "Do scale minutes-away by playback speed.",
+   "Do keep light mode cool porcelain."
+  ],
+  "donts": [
+   "Don't put eyebrows above headings.",
+   "Don't use colored side borders.",
+   "Don't show book content in the public shell."
+  ]
+ }
+}

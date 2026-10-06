@@ -1,0 +1,202 @@
+{
+ "title": "Escolha o mundo visual do app",
+ "question": "A rolagem escolheu “Rodovia”. Fique com ela, pegue uma alternativa, ou role de novo.",
+ "options": [
+  {
+   "id": "assigned",
+   "label": "Rodovia",
+   "kicker": "THE ROLL",
+   "lineage": "Placas de orientação das rodovias federais brasileiras (verde DNIT, marcos quilométricos, placas de saída)",
+   "thesis": "O livro é uma estrada: capítulos são saídas, sua posição é um marco de km, legível num relance a 80 km/h.",
+   "palette": [
+    "#00613A",
+    "#F6F5EE",
+    "#16191B",
+    "#F2B705",
+    "#1D4E9E"
+   ],
+   "materials": [
+    "chapa refletiva sobre alumínio",
+    "borda branca inset com cantos arredondados",
+    "asfalto"
+   ],
+   "viewport": "“Ouvindo” é uma grande placa verde: o capítulo como linha de destino, a seção abaixo, uma placa de km com a posição no livro e a próxima saída com distância em minutos; controles grandes embaixo, no asfalto.",
+   "risk": "Vira parque temático se setas e escudos forem espalhados como enfeite em vez de carregarem navegação real.",
+   "raised": [
+    {
+     "from": "challenger-datamatics",
+     "raise": "Todo tempo e distância em algarismos tabulares de contraste total, sem tremer enquanto toca."
+    },
+    {
+     "from": "challenger-annual",
+     "raise": "Uma única grotesca larga carrega tudo, do destino à legenda; nenhuma segunda fonte."
+    },
+    {
+     "from": "challenger-atlas",
+     "raise": "Distância verdadeira: as saídas ficam espaçadas no trajeto pela duração real de cada capítulo."
+    },
+    {
+     "from": "challenger-crouwel",
+     "raise": "Os numerais do km são monumentais, o maior elemento da tela, dimensionados pela grade da placa."
+    }
+   ]
+  },
+  {
+   "id": "challenger-transit",
+   "label": "Linha do Metrô",
+   "verdict": "competitive",
+   "lineage": "Diagrama de linhas de metrô em esmalte azul-noite (fundido com a sinalização do Metrô de SP)",
+   "thesis": "Cada livro é uma linha: capítulos são estações, partes são baldeações, e você é o trem.",
+   "palette": [
+    "#0E1A3A",
+    "#F4F1EA",
+    "#D7263D",
+    "#1E5BD8",
+    "#F2A900",
+    "#1E9E5A"
+   ],
+   "materials": [
+    "esmalte azul-noite",
+    "marcas de estação em porcelana"
+   ],
+   "viewport": "A linha atual desenhada na vertical com seu trem entre duas estações; o nome da próxima estação enorme; controles na base.",
+   "case": "Funde bem e combina com o trajeto diário; também era o topo da minha própria lista. Empata em identificação, ganha na navegação por estrutura, perde em leitura num relance ao dirigir.",
+   "risk": "Cores por parte viram decoração quando um livro tem uma parte só.",
+   "hero": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-midnight-transit-diagram-hero.webp",
+   "board": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-midnight-transit-diagram.webp"
+  },
+  {
+   "id": "challenger-datamatics",
+   "label": "Campo de dados",
+   "verdict": "declined",
+   "lineage": "Ryoji Ikeda, datamatics",
+   "thesis": "O áudio como colunas de código de barras em preto e branco puro.",
+   "palette": [
+    "#000000",
+    "#FFFFFF"
+   ],
+   "materials": [
+    "barras de pixel",
+    "fios finos"
+   ],
+   "viewport": "Um campo de barras com a forma de onda do capítulo.",
+   "case": "Perde nos dois eixos: ninguém se reconhece nisso no trânsito, e o estrobo atrapalha.",
+   "kept": "Contraste absoluto e algarismos tabulares para todo tempo.",
+   "risk": "Ilegível em movimento.",
+   "hero": "https://impeccable.style/worlds/cards/ikeda-datamatics-hero.webp"
+  },
+  {
+   "id": "challenger-annual",
+   "label": "Anuário de design",
+   "verdict": "declined",
+   "lineage": "Seção de pranchas de um anuário de design",
+   "thesis": "Cada capítulo como uma prancha impressa com marcas de registro.",
+   "palette": [
+    "#F5F4F6",
+    "#16181A",
+    "#DCDDF3",
+    "#C9C7C4"
+   ],
+   "materials": [
+    "papel não revestido",
+    "fios de 1px"
+   ],
+   "viewport": "Folha contínua com barra de tokens mono.",
+   "case": "Perde nos dois eixos: estético demais para um relance no carro.",
+   "kept": "Disciplina de uma só fonte em todo o sistema.",
+   "risk": "Frio e pequeno demais em movimento.",
+   "hero": "https://impeccable.style/worlds/cards/design-annual-s-plate-section-hero.webp"
+  },
+  {
+   "id": "challenger-goods",
+   "label": "Catálogo de personagens",
+   "verdict": "declined",
+   "lineage": "Catálogo de mascotes em grade pastel",
+   "thesis": "Capítulos como personagens com plaquinha de nome.",
+   "palette": [
+    "#FCE4EC",
+    "#E3F2FD",
+    "#FFF8E1",
+    "#FFFFFF"
+   ],
+   "materials": [
+    "cores chapadas",
+    "contorno branco"
+   ],
+   "viewport": "Grade de capítulos fofos.",
+   "case": "Perde nos dois eixos: o tom não combina com um livro de negócios nem com o trânsito.",
+   "kept": "Cada item com a mesma mobília fixa (número, duração, progresso) sempre no mesmo lugar.",
+   "risk": "Infantil.",
+   "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-character-goods-catalog-hero.webp"
+  },
+  {
+   "id": "challenger-atlas",
+   "label": "Atlas estelar",
+   "verdict": "declined",
+   "lineage": "Cartas celestes",
+   "thesis": "Capítulos como estrelas com magnitude pela duração.",
+   "palette": [
+    "#0B1530",
+    "#F2F2EE",
+    "#E0533D"
+   ],
+   "materials": [
+    "papel de carta náutica",
+    "lanterna vermelha"
+   ],
+   "viewport": "Um céu de capítulos.",
+   "case": "Perde nos dois eixos: bonito, mas a ordem do livro some no céu.",
+   "kept": "Uma escala fixa onde tamanho/espaço codifica uma grandeza real.",
+   "risk": "Abstrato demais.",
+   "hero": "https://impeccable.style/worlds/cards/notation-diagram-systems-star-atlas-hero.webp"
+  },
+  {
+   "id": "challenger-crouwel",
+   "label": "Grade Crouwel",
+   "verdict": "declined",
+   "lineage": "Wim Crouwel, especímenes em grade",
+   "thesis": "Letras monumentais construídas na grade.",
+   "palette": [
+    "#FFFFFF",
+    "#111111",
+    "#2F5BFF"
+   ],
+   "materials": [
+    "grade de construção",
+    "grotesca neutra"
+   ],
+   "viewport": "Número do capítulo gigante sobre grade azul.",
+   "case": "Perde nos dois eixos: poster, não ferramenta de trânsito.",
+   "kept": "Numerais monumentais como o elemento dominante.",
+   "risk": "Exibicionista.",
+   "hero": "https://impeccable.style/worlds/cards/crouwel-grid-specimen-hero.webp"
+  }
+ ],
+ "reroll": {
+  "registers": [
+   "safer",
+   "bolder"
+  ]
+ },
+ "buildPath": {
+  "value": "code",
+  "toggle": false
+ },
+ "canon": true,
+ "canonCard": {
+  "label": "O padrão da categoria",
+  "thesis": "Como Apple Books / Audible: capa grande, fundo tingido pela capa, controles centralizados.",
+  "palette": [
+   "#0B0B0C",
+   "#F5F5F7",
+   "#FF9F0A"
+  ],
+  "materials": [
+   "capa em destaque",
+   "desfoque"
+  ],
+  "viewport": "Capa no topo, título, barra de progresso e controles centralizados.",
+  "risk": "Igual a qualquer player, por definição."
+ },
+ "steer": true
+}

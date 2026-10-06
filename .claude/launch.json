@@ -1,0 +1,38 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bakeoff",
+      "runtimeExecutable": "/Users/gsdutra/Documents/Projects/audiobooks_project/.venv/bin/python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8765",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "/Users/gsdutra/Documents/Projects/audiobooks_project/bakeoff"
+      ],
+      "port": 8765
+    },
+    {
+      "name": "app",
+      "runtimeExecutable": "/Users/gsdutra/Documents/Projects/audiobooks_project/.venv/bin/python",
+      "runtimeArgs": [
+        "/Users/gsdutra/Documents/Projects/audiobooks_project/pipeline/devserver.py",
+        "8766"
+      ],
+      "port": 8766
+    },
+    {
+      "name": "app-mock",
+      "runtimeExecutable": "/Users/gsdutra/Documents/Projects/audiobooks_project/.venv/bin/python",
+      "runtimeArgs": [
+        "/Users/gsdutra/Documents/Projects/audiobooks_project/pipeline/devserver.py",
+        "8767",
+        "--mock"
+      ],
+      "port": 8767
+    }
+  ]
+}

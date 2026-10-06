@@ -1,0 +1,20 @@
+# Book content and secrets never leave this machine unencrypted
+.secrets/
+build/
+*.epub
+bakeoff/samples/
+bakeoff/index.html
+bakeoff/passage.json
+bakeoff/ref/
+bakeoff/*.log
+
+# Design-review captures show book text; reference images are third-party
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/ref/
+
+# Tooling
+.venv/
+__pycache__/
+.DS_Store
+.impeccable/questions/
