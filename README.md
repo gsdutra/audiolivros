@@ -4,6 +4,26 @@ A private audiobook library for the iPhone (PWA), made from your own EPUBs with 
 locally on this Mac. The book content is AES-256 encrypted before it leaves the Mac; the app
 decrypts it on the phone with your library passphrase (`.secrets/passphrase`, never committed).
 
+**Live:** https://gsdutra.github.io/audiolivros/
+
+## On the iPhone
+
+1. Open the link above in Safari, then tap Share → **Adicionar à Tela de Início**.
+2. Open **Audiolivros** from the home screen and type the passphrase (`cat .secrets/passphrase` on
+   the Mac). Do it inside the home-screen app: it has its own storage, separate from Safari.
+3. Optional: library → **Baixar** to keep the whole book offline.
+
+## Publishing new chapters
+
+The render publishes chapters into `app/library/` as they finish. To put them online:
+
+```bash
+pipeline/deploy.sh
+```
+
+It commits `app/` (encrypted files only) and pushes; GitHub Actions deploys within a minute. In the
+app, new chapters appear the next time it opens.
+
 ## Layout
 
 - `pipeline/`: EPUB → narration → audio → encrypted library
