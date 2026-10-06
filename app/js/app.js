@@ -3,6 +3,7 @@ import * as vault from './vault.js';
 import { bookmarks, heard, position, settings } from './store.js';
 import { Player } from './player.js';
 import { icon } from './icons.js';
+import { BANDS, FLAT, PRESETS, RANGE, isFlat, presetOf } from './eq.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const view = $('#view');
@@ -12,6 +13,7 @@ const sheet = $('#sheet');
 const toastEl = $('#toast');
 
 const player = new Player();
+if (['localhost', '127.0.0.1'].includes(location.hostname)) window.audiolivros = player; // dev inspection only
 const LINES = [['scarlet', '#fff'], ['cobalt', '#fff'], ['green', '#fff'], ['amber', '#0B1230']];
 const RATES = [0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.5, 1.75, 2];
 
@@ -82,7 +84,7 @@ function toast(msg, action, fn, ms = 4500) {
   toastTimer = setTimeout(() => { toastEl.hidden = true; }, ms);
 }
 
-function openSheet(html, onPick) {
+function openSheet(html, onPick, { keep = false } = {}) {
   const form = $('.sheet-body', sheet);
   form.innerHTML = `${html}<div class="close-row"><button class="btn btn-ghost btn-block" value="close">Fechar</button></div>`;
   form.onclick = (e) => {
@@ -90,9 +92,78 @@ function openSheet(html, onPick) {
     if (!b) return;
     e.preventDefault();
     onPick(b.dataset.pick);
-    sheet.close();
+    if (!keep) sheet.close();
   };
   sheet.showModal();
+  return form;
+}
+
+// Equalizer: five bands drawn as short vertical rails; their stations are joined by the book's line.
+function eqSheet() {
+  let gains = [...player.eqGains];
+  const form = openSheet(`
+    <h2 id="sheet-title">Equalizador</h2>
+    <p>Ajusta o timbre do narrador. Vale para todos os livros neste aparelho.</p>
+    <div class="chips" id="eq-presets">${PRESETS.map((p) => `<button type="button" class="chip" data-pick="${p.id}">${p.label}</button>`).join('')}
+      <span class="chip chip-static" id="eq-custom">Personalizado</span></div>
+    <div class="eq" role="group" aria-label="Faixas do equalizador">
+      <svg class="eq-curve" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline/></svg>
+      ${BANDS.map((b, i) => `<div class="eq-band">
+        <output id="eq-v${i}"></output>
+        <div class="eq-rail" role="slider" tabindex="0" data-i="${i}" aria-label="${b.label}, ${b.hz} Hz"
+          aria-valuemin="${-RANGE}" aria-valuemax="${RANGE}"><i class="zero"></i><i class="thumb"></i></div>
+        <span>${b.label}</span><small>${b.hz} Hz</small></div>`).join('')}
+    </div>`, (id) => apply([...PRESETS.find((p) => p.id === id).gains]), { keep: true });
+
+  const frac = (g) => 1 - (g + RANGE) / (2 * RANGE); // 0 = top (+12 dB), 1 = bottom (−12 dB)
+  const fmt = (g) => (g > 0 ? `+${g}` : String(g));
+  function paint() {
+    const preset = presetOf(gains);
+    form.querySelectorAll('#eq-presets [data-pick]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.pick === preset));
+    $('#eq-custom', form).setAttribute('aria-pressed', preset === 'custom');
+    form.querySelectorAll('.eq-rail').forEach((rail, i) => {
+      $('.thumb', rail).style.top = `calc(13px + (100% - 26px) * ${frac(gains[i])})`;
+      rail.setAttribute('aria-valuenow', gains[i]);
+      rail.setAttribute('aria-valuetext', `${fmt(gains[i])} dB`);
+      $(`#eq-v${i}`, form).textContent = fmt(gains[i]);
+    });
+    $('.eq-curve polyline', form).setAttribute('points', gains.map((g, i) => `${(i + 0.5) * 20},${frac(g) * 100}`).join(' '));
+  }
+  function apply(g) {
+    gains = g;
+    player.setEq([...g]);
+    paint();
+    update();
+  }
+  const set = (i, v) => {
+    v = Math.max(-RANGE, Math.min(RANGE, v));
+    if (gains[i] === v) return;
+    const g = [...gains];
+    g[i] = v;
+    apply(g);
+  };
+  form.querySelectorAll('.eq-rail').forEach((rail) => {
+    const i = Number(rail.dataset.i);
+    const valueAt = (y) => {
+      const r = rail.getBoundingClientRect();
+      const f = Math.max(0, Math.min(1, (y - r.top - 13) / (r.height - 26)));
+      return Math.round(RANGE - f * 2 * RANGE);
+    };
+    rail.addEventListener('pointerdown', (e) => {
+      rail.setPointerCapture(e.pointerId);
+      rail.classList.add('dragging');
+      set(i, valueAt(e.clientY));
+    });
+    rail.addEventListener('pointermove', (e) => { if (rail.hasPointerCapture(e.pointerId)) set(i, valueAt(e.clientY)); });
+    const end = () => rail.classList.remove('dragging');
+    rail.addEventListener('pointerup', end);
+    rail.addEventListener('pointercancel', end);
+    rail.addEventListener('keydown', (e) => {
+      const d = { ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1 }[e.key];
+      if (d) { e.preventDefault(); set(i, gains[i] + d); }
+    });
+  });
+  paint();
 }
 
 function speedSheet() {
@@ -366,13 +437,14 @@ function renderNow() {
     <div class="secondary">
       <button class="btn btn-ghost" data-act="speed" id="np-speed"></button>
       <button class="btn btn-ghost" data-act="sleep" id="np-sleep"></button>
-      <button class="btn btn-ghost" data-act="mark">${icon.markAdd(20)}Marcar</button>
+      <button class="btn btn-ghost" data-act="eq" id="np-eq" aria-label="Equalizador">EQ</button>
+      <button class="btn btn-ghost" data-act="mark" aria-label="Marcar este trecho">Marcar</button>
     </div>
   </div>`;
   Object.assign(nowRefs, {
     section: $('#np-section'), board: $('#np-board'), boardH: $('#board-h'), rate: $('#np-rate'), hit: $('#np-track .hit'),
     track: $('#np-track'), done: $('#np-track .done'), train: $('#np-track .train'),
-    el: $('#np-el'), rem: $('#np-rem'), play: $('#np-play'), speed: $('#np-speed'), sleep: $('#np-sleep'),
+    el: $('#np-el'), rem: $('#np-rem'), play: $('#np-play'), speed: $('#np-speed'), sleep: $('#np-sleep'), eq: $('#np-eq'),
     boardKey: null, sectionIdx: null,
   });
   $('#to-lib').onclick = () => go('library');
@@ -424,8 +496,10 @@ function updateNow() {
   r.rate.textContent = rate === 1 ? '' : `a ${rateLabel(rate)}`;
   r.speed.textContent = rateLabel(rate);
   const rem = player.sleepRemaining();
-  r.sleep.innerHTML = `${icon.moon(20)}${player.sleep ? (player.sleep.kind === 'track' ? 'Fim cap.' : human(rem / 1000)) : 'Timer'}`;
+  r.sleep.textContent = player.sleep ? (player.sleep.kind === 'track' ? 'Fim cap' : human(rem / 1000)) : 'Timer';
+  r.sleep.setAttribute('aria-label', player.sleep ? `Timer: ${r.sleep.textContent}` : 'Timer para dormir');
   r.sleep.classList.toggle('on', !!player.sleep);
+  r.eq.classList.toggle('on', !isFlat(player.eqGains));
   paintPlay(r.play);
 }
 
@@ -723,6 +797,7 @@ view.addEventListener('click', (e) => {
       next: () => { player.unlock(); player.next(); },
       speed: speedSheet,
       sleep: sleepSheet,
+      eq: eqSheet,
       mark: addMark,
     })[a.dataset.act]?.();
     return;
@@ -746,6 +821,9 @@ player.addEventListener('error', (e) => {
   if (e.detail?.name !== 'AbortError') toast(msg);
 });
 player.addEventListener('finished', () => toast('Fim do livro. Parabéns!'));
+player.addEventListener('eqinterrupted', (e) => toast(
+  `O iPhone pausou o equalizador com a tela bloqueada. Voltei para ${clock(e.detail.t)}, onde o som parou.`,
+  'Desligar EQ', () => { player.setEq([...FLAT]); update(); }, 10000));
 setInterval(() => { if (player.sleep && state.route === 'now') updateNow(); }, 15000);
 
 window.addEventListener('hashchange', () => {

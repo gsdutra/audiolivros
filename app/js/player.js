@@ -1,6 +1,7 @@
-// Playback engine: one <audio> element, decrypted chapter blobs, Media Session, sleep timer, resume.
+// Playback engine: one <audio> element, decrypted chapter blobs, Media Session, sleep timer, resume, EQ.
 import * as vault from './vault.js';
 import { heard, position, settings } from './store.js';
+import { Equalizer, FLAT, isFlat } from './eq.js';
 
 // 0.1 s of silence: playing it inside the first tap "activates" the element for later async play() calls on iOS.
 const SILENCE = 'data:audio/wav;base64,UklGRjQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YRAAAAAAAAAAAAAAAAAAAAAAAAAA';
@@ -19,8 +20,6 @@ const bisect = (arr, t, at = (x) => x) => {
 export class Player extends EventTarget {
   constructor() {
     super();
-    this.audio = new Audio();
-    this.audio.preload = 'auto';
     this.book = null;
     this.track = 0;
     this.urls = new Map(); // track index -> Promise<objectURL>
@@ -30,18 +29,119 @@ export class Player extends EventTarget {
     this.sleep = null; // { kind: 'time', until } | { kind: 'track' }
     this.lastSave = 0;
     this.coverUrl = null;
+    this.eq = null; // Equalizer while a non-flat EQ is in use
+    this.eqGains = settings.get().eq || FLAT;
 
-    const a = this.audio;
-    a.addEventListener('play', () => this.emit('state'));
-    a.addEventListener('pause', () => { this.pausedAt = Date.now(); this.save(); this.emit('state'); });
-    a.addEventListener('waiting', () => this.emit('state'));
-    a.addEventListener('playing', () => this.emit('state'));
-    a.addEventListener('timeupdate', () => this.onTime());
-    a.addEventListener('ended', () => this.onEnded());
-    a.addEventListener('ratechange', () => this.updatePositionState());
-    document.addEventListener('visibilitychange', () => document.hidden && this.save());
+    this.bind(new Audio());
+    document.addEventListener('visibilitychange', () => this.onVisibility());
     window.addEventListener('pagehide', () => this.save());
     this.mediaSession();
+  }
+
+  /** Attach listeners to an <audio> element; events from a replaced element are ignored. */
+  bind(a) {
+    this.audio = a;
+    a.preload = 'auto';
+    const on = (type, fn) => a.addEventListener(type, (e) => { if (a === this.audio) fn(e); });
+    on('play', () => this.emit('state'));
+    on('pause', () => { this.pausedAt = Date.now(); this.save(); this.emit('state'); });
+    on('waiting', () => this.emit('state'));
+    on('playing', () => this.emit('state'));
+    on('timeupdate', () => this.onTime());
+    on('ended', () => this.onEnded());
+    on('ratechange', () => this.updatePositionState());
+  }
+
+  // ---- Equalizer ----
+  setEq(gains) {
+    this.eqGains = gains;
+    settings.set({ eq: gains });
+    if (isFlat(gains)) {
+      if (this.eq) this.swapElement();
+      return;
+    }
+    if (!this.eq && !document.hidden) this.attachEq();
+    this.eq?.set(gains);
+    this.eq?.resume().catch(() => {});
+  }
+
+  /** Synchronously inside a tap: build the graph and wake the AudioContext (iOS needs the gesture). */
+  prepareEq() {
+    if (isFlat(this.eqGains) || document.hidden) return;
+    if (!this.eq) this.attachEq();
+    this.eq.resume().catch(() => {});
+  }
+
+  attachEq() {
+    this.eq = new Equalizer(this.audio);
+    this.eq.set(this.eqGains);
+    this.eq.ctx.onstatechange = () => {
+      if (!this.eq || this.eq.running || !this.playing) return;
+      if (document.hidden) {
+        // iOS suspended the EQ with the screen locked: stop rather than let the book run on silently.
+        this.eqStopped = true;
+        this.audio.pause();
+      } else {
+        this.eq.resume().catch(() => {});
+      }
+    };
+  }
+
+  /** Back to the plain element path (a routed element can't be un-routed). Runs inside the tap. */
+  swapElement() {
+    const old = this.audio;
+    const { src, currentTime: t } = old;
+    const wasPlaying = this.playing;
+    const eq = this.eq;
+    this.eq = null;
+    this.bind(new Audio());
+    old.pause();
+    eq.close();
+    const a = this.audio;
+    if (src) {
+      a.src = src;
+      if (src !== SILENCE) {
+        a.muted = wasPlaying; // started inside the tap for iOS; unmuted once it's at the right spot
+        a.addEventListener('loadedmetadata', () => {
+          a.playbackRate = settings.get().rate;
+          if (t > 0.1) a.currentTime = t;
+          else a.muted = false;
+        }, { once: true });
+        a.addEventListener('seeked', () => { a.muted = false; }, { once: true });
+      }
+      if (wasPlaying) a.play().catch((e) => this.emit('error', e));
+    }
+    this.emit('state');
+  }
+
+  onVisibility() {
+    if (document.hidden) {
+      // AudioContext time only advances while sound flows: compare it with the element later.
+      this.hideMark = this.eq && this.playing
+        ? { track: this.track, el: this.audio.currentTime, ctx: this.eq.ctx.currentTime, rate: this.audio.playbackRate }
+        : null;
+      this.save();
+      return;
+    }
+    const mark = this.hideMark;
+    this.hideMark = null;
+    if (!this.eq) return;
+    // Where the sound really stopped (the AudioContext clock freezes while suspended).
+    const heardUntil = mark ? mark.el + (this.eq.ctx.currentTime - mark.ctx) * mark.rate : null;
+    this.eq.resume().catch(() => {});
+    // WebKit sometimes resumes the context a moment after unlock: judge after a short wait.
+    setTimeout(() => {
+      if (!this.eq) return;
+      let t = this.audio.currentTime;
+      let lost = this.eqStopped;
+      if (heardUntil != null && t - heardUntil > 3) { lost = true; t = heardUntil; }
+      if (!this.eq.running && this.playing) lost = true; // "playing" but no sound reaches the speaker
+      if (!lost) return;
+      this.eqStopped = false;
+      this.pause();
+      this.seek(t);
+      this.emit('eqinterrupted', { t });
+    }, 400);
   }
 
   emit(type, detail) { this.dispatchEvent(new CustomEvent(type, { detail })); }
@@ -88,6 +188,7 @@ export class Player extends EventTarget {
 
   async load(i, t = 0, autoplay = true) {
     if (!this.book || i < 0 || i >= this.book.tracks.length) return;
+    this.hideMark = null;
     const same = i === this.track && this.audio.src && this.urls.has(i);
     this.track = i;
     this.pendingTime = t;
@@ -135,6 +236,7 @@ export class Player extends EventTarget {
 
   async play() {
     if (!this.book) return;
+    this.prepareEq(); // before the first await: resuming the AudioContext needs the tap
     if (this.loading || !this.audio.src || this.audio.src === SILENCE) {
       await this.load(this.track, this.time, false);
     }
@@ -160,7 +262,9 @@ export class Player extends EventTarget {
 
   seek(t) {
     if (this.pendingTime != null) { this.pendingTime = Math.max(0, t); this.emit('time'); return; }
-    this.audio.currentTime = Math.max(0, Math.min(t, this.duration - 0.5));
+    const to = Math.max(0, Math.min(t, this.duration - 0.5));
+    if (this.hideMark) this.hideMark.el += to - this.audio.currentTime;
+    this.audio.currentTime = to;
     this.onTime(true);
   }
 

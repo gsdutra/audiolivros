@@ -93,7 +93,7 @@ body.has-mini #view { padding-bottom: calc(var(--tabs-h) + var(--safe-b) + 84px)
   color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .icon-btn {
-  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 22px; color: var(--ink);
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--ink);
 }
 .icon-btn:active { background: var(--panel-press); }
 
@@ -255,7 +255,7 @@ code { font: 500 0.92em/1 ui-monospace, 'SF Mono', Menlo, monospace; color: var(
 .track .times { display: flex; justify-content: space-between; margin-top: 2px; font: 500 15px/1 var(--body); color: var(--ink-2); }
 
 .controls { display: flex; align-items: center; justify-content: space-between; margin: 18px var(--gut) 0; }
-.ctl { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 28px; color: var(--ink); }
+.ctl { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; color: var(--ink); }
 .ctl.small { width: 48px; height: 48px; color: var(--ink-2); }
 .ctl:active { background: var(--panel-press); }
 .play {
@@ -268,8 +268,8 @@ code { font: 500 0.92em/1 ui-monospace, 'SF Mono', Menlo, monospace; color: var(
 .play.loading svg { animation: breathe 1.2s ease-in-out infinite; }
 @keyframes breathe { 50% { opacity: 0.35; } }
 
-.secondary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 26px var(--gut) 0; }
-.secondary .btn { min-height: 48px; padding: 0 8px; gap: 8px; font-size: 16px; letter-spacing: 0.06em; }
+.secondary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 26px var(--gut) 0; }
+.secondary .btn { min-height: 48px; padding: 0 4px; font-size: 15px; letter-spacing: 0.06em; white-space: nowrap; }
 .secondary .btn.on { background: var(--line); border-color: var(--line); color: var(--line-on); }
 
 /* ---------- Chapters: the line drawn vertically ---------- */
@@ -402,6 +402,25 @@ code { font: 500 0.92em/1 ui-monospace, 'SF Mono', Menlo, monospace; color: var(
 .chip[aria-pressed='true'] { background: var(--line); border-color: var(--line); color: var(--line-on); }
 .chip.wide { grid-column: span 3; font-size: 17px; letter-spacing: 0.08em; text-transform: uppercase; }
 .sheet .close-row { margin-top: 14px; }
+.chip-static { display: grid; place-items: center; color: var(--ink-3); font-size: 17px; letter-spacing: 0.04em; }
+.chip-static[aria-pressed='true'] { color: var(--ink); border-color: var(--rule); }
+
+/* Equalizer: band rails with draggable stations, joined by the line */
+.eq { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 18px; }
+.eq-curve { position: absolute; z-index: 1; left: 0; top: 41px; width: 100%; height: 142px; overflow: visible; pointer-events: none; }
+.eq-curve polyline { fill: none; stroke: var(--line); stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.eq-band { display: grid; justify-items: center; text-align: center; min-width: 0; }
+.eq-band output { height: 28px; font: 600 19px/28px var(--cond); }
+.eq-rail { position: relative; width: 100%; height: 168px; touch-action: none; cursor: ns-resize; }
+.eq-rail::before { content: ''; position: absolute; left: 50%; top: 13px; bottom: 13px; width: 4px; margin-left: -2px; border-radius: 2px; background: var(--hair); }
+.eq-rail .zero { position: absolute; left: 50%; top: 50%; width: 18px; height: 2px; margin: -1px 0 0 -9px; background: var(--ink-3); }
+.eq-rail .thumb {
+  position: absolute; z-index: 2; left: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%;
+  background: var(--ink); border: 6px solid var(--line); box-shadow: 0 0 0 3px var(--panel); transition: transform 0.15s var(--ease);
+}
+.eq-rail.dragging .thumb { transform: scale(1.15); }
+.eq-band span { margin-top: 8px; font: 600 14px/1.1 var(--cond); letter-spacing: 0.05em; text-transform: uppercase; }
+.eq-band small { margin-top: 2px; font-size: 13px; color: var(--ink-2); }
 
 .toast {
   position: fixed; z-index: 20; left: 12px; right: 12px;
@@ -414,7 +433,7 @@ code { font: 500 0.92em/1 ui-monospace, 'SF Mono', Menlo, monospace; color: var(
 body.has-mini .toast { bottom: calc(var(--tabs-h) + var(--safe-b) + 84px); }
 body.no-tabs .toast { bottom: calc(var(--safe-b) + 16px); }
 .toast button { font: 600 15px/1 var(--cond); letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 12px; border-radius: 6px; color: var(--ground); }
-.toast button:active { background: rgba(0, 0, 0, 0.12); }
+.toast button:active { background: color-mix(in oklab, var(--ground) 14%, transparent); }
 
 @media (min-width: 700px) {
   #view, .tabs { max-width: 560px; margin-inline: auto; }

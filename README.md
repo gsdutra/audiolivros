@@ -13,6 +13,15 @@ decrypts it on the phone with your library passphrase (`.secrets/passphrase`, ne
    the Mac). Do it inside the home-screen app: it has its own storage, separate from Safari.
 3. Optional: library → **Baixar** to keep the whole book offline.
 
+## Render progress
+
+```bash
+.venv/bin/python pipeline/status.py
+```
+
+Shows each chapter's progress, which ones are ready to publish, current speed, ETA, and whether the
+renderer is still running (with the restart command if it isn't). The raw log is `build/synth.log`.
+
 ## Publishing new chapters
 
 The render publishes chapters into `app/library/` as they finish. To put them online:

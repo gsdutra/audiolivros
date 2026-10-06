@@ -1,11 +1,11 @@
 // Offline support. App shell: precached, served stale-while-revalidate. Library: hashed files cache-first (they never
 // change), the small index/manifest files network-first so newly published books show up.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL = `shell-${VERSION}`;
 const LIBRARY = 'library';
 const SHELL_FILES = [
   './', 'index.html', 'styles.css', 'manifest.webmanifest',
-  'js/app.js', 'js/player.js', 'js/store.js', 'js/vault.js', 'js/icons.js',
+  'js/app.js', 'js/player.js', 'js/store.js', 'js/vault.js', 'js/icons.js', 'js/eq.js',
   'fonts/fonts.css', 'fonts/Barlow-400.woff2', 'fonts/Barlow-500.woff2', 'fonts/Barlow-600.woff2',
   'fonts/BarlowCondensed-500.woff2', 'fonts/BarlowCondensed-600.woff2', 'fonts/BarlowCondensed-700.woff2',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',

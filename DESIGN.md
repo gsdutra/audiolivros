@@ -15,37 +15,99 @@ colors:
   green: "#2BB653"
   danger: "#FF6B6B"
 typography:
+  unlock:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "clamp(48px, 15vw, 64px)"
+    fontWeight: 700
+    lineHeight: 0.92
   station:
     fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
     fontSize: "clamp(36px, 11.5vw, 48px)"
     fontWeight: 700
     lineHeight: 0.93
     letterSpacing: "0.005em"
+  title-lg:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "44px"
+    fontWeight: 700
+    lineHeight: 0.95
+  title:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "34px"
+    fontWeight: 700
+    lineHeight: 0.95
+  title-sm:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "30px"
+    fontWeight: 700
+    lineHeight: 0.95
+  card-title:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "28px"
+    fontWeight: 700
+    lineHeight: 0.98
+  eta:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "22px"
+    fontWeight: 600
+    lineHeight: 1
+  station-list:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "21px"
+    fontWeight: 600
+    lineHeight: 1.05
+    letterSpacing: "0.04em"
+  subtitle:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "20px"
+    fontWeight: 500
+    lineHeight: 1.25
+  reading:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "19px"
+    fontWeight: 400
+    lineHeight: 1.58
+  input:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "18px"
+    fontWeight: 400
+    lineHeight: 1.2
+  body:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "17px"
+    fontWeight: 400
+    lineHeight: 1.45
   label:
     fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
     fontSize: "16px"
     fontWeight: 600
     lineHeight: 1.1
     letterSpacing: "0.12em"
-  eta:
+  meta:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "15px"
+    fontWeight: 500
+    lineHeight: 1.3
+  small:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "14px"
+    fontWeight: 400
+    lineHeight: 1.3
+  caption:
     fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
-    fontSize: "22px"
+    fontSize: "13px"
     fontWeight: 600
     lineHeight: 1
-  body:
-    fontFamily: "Barlow, system-ui, sans-serif"
-    fontSize: "17px"
-    fontWeight: 400
-    lineHeight: 1.45
-  reading:
-    fontFamily: "Barlow, system-ui, sans-serif"
-    fontSize: "19px"
-    fontWeight: 400
-    lineHeight: 1.58
+    letterSpacing: "0.1em"
 rounded:
+  hair: "2px"
+  rail: "3px"
+  cover: "4px"
+  tight: "6px"
   control: "8px"
   panel: "12px"
   pill: "13px"
+  sheet: "18px"
   round: "50%"
 spacing:
   gutter: "20px"
@@ -126,7 +188,7 @@ One family in two widths, both self-hosted (SIL OFL): **Barlow Condensed** for s
 
 ## Layout
 
-A single phone column with a 20px gutter; above 700px wide it centres at 560px max with the tab bar following. Fixed bottom tab bar (62px + safe area); a floating mini-player sits 8px above it on every screen except Ouvindo. Ouvindo stacks: top bar → station → departures board → line scrubber → transport → speed/timer/mark row. Content clears the safe areas (`viewport-fit=cover`, black-translucent status bar).
+A single phone column with a 20px gutter; above 700px wide it centres at 560px max with the tab bar following. Fixed bottom tab bar (62px + safe area); a floating mini-player sits 8px above it on every screen except Ouvindo. Ouvindo stacks: top bar → station → departures board → line scrubber → transport → a four-button text row (speed · timer · EQ · mark). Content clears the safe areas (`viewport-fit=cover`, black-translucent status bar).
 
 ## Elevation & Depth
 
@@ -137,7 +199,7 @@ Depth comes from outlines, not shadows: boards, cards, inputs and secondary butt
 - Stations: white rings on the line (20px, 4px stroke); interchanges: larger rings (32px) or a capsule across a bundle of lines.
 - The train: a porcelain disc ringed in line ink with a ground-coloured halo so it always reads on top of the line.
 - Lines: 6–8px, round caps, only horizontal, vertical and 45° segments.
-- Controls 8px radius, panels 12px, badges and the play ring fully round.
+- Rails and hairlines 2–3px radius (half their width), cover 4px, toast actions 6px, controls 8px, panels 12px, sheets 18px on top; badges, stations, the train and round buttons fully round.
 
 ## Components
 
@@ -157,6 +219,9 @@ The current chapter drawn as an 8px line with section stops; heard part in ink, 
 
 ### The vertical line (Capítulos)
 The whole book as a vertical line through station rows; parts appear as interchange rows; the current station is the train; each station expands to its section stops with start times.
+
+### Equalizer (sheet)
+Five speech bands (Graves 120 Hz, Corpo 400 Hz, Médios 1,2 kHz, Presença 3,2 kHz, Brilho 8 kHz, ±12 dB) drawn as short vertical rails; each band's value is a draggable station (the train style) and the stations are joined by the book's line in its ink, so the curve reads as a line through stations. Presets sit above as chips (Plano, Voz clara, Carro, Quente, Suave; "Personalizado" lights up when bands are edited). The EQ button in the secondary row turns into a line-ink plate while a non-flat setting is active.
 
 ### Inputs / Fields
 54px, 1.5px rule, enamel-panel fill; focus swaps the rule to line ink with a 3px ink halo. Errors sit beneath in `danger`, naming the problem and the fix.

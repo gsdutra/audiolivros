@@ -51,7 +51,8 @@ class Checker:
         chars_sim = SequenceMatcher(None, "".join(a), "".join(b), autojunk=False).ratio() if a else 1.0
         sim = max(words_sim, chars_sim)
         short = len(a) < 5
-        tail_ok = short or bool(set(a[-3:]) & set(b[-6:]))
+        # A missing ending only counts when the overall match is weak ("IVP" heard as "e VP" is fine).
+        tail_ok = short or sim >= 0.9 or bool(set(a[-3:]) & set(b[-6:]))
         reasons = []
         if sim < (0.55 if short else 0.8):
             reasons.append(f"similarity {sim:.2f}")
